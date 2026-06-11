@@ -7,7 +7,7 @@ import datetime
 # CONFIG LOGIN
 # =========================
 
-VALID_USERNAME = "admin"
+VALID_USERNAME = "admin8"
 VALID_PASSWORD = "1234"
 
 
