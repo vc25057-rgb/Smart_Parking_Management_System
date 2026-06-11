@@ -314,7 +314,20 @@ class App:
 # =========================
 # LOGIN SYSTEM
 # =========================
+def login():
+    u = user.get()
+    p = pwd.get()
 
+    if u == VALID_USERNAME and p == VALID_PASSWORD:
+        messagebox.showinfo("Login", "Success")
+        login_root.destroy()
+
+        root = tk.Tk()
+        App(root)
+        root.mainloop()
+    else:
+        messagebox.showerror("Login", "Wrong credentials")
+        
 login_root = tk.Tk()
 login_root.title("SMART PARKING MANAGEMENT SYSTEM - LOGIN")
 login_root.geometry("500x500")
