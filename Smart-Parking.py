@@ -333,7 +333,7 @@ login_root.title("SMART PARKING MANAGEMENT SYSTEM - LOGIN")
 login_root.geometry("1000x600") #adjust saiz login skrin
 
 # ===== LOAD IMAGE =====
-img = Image.open("parking.jpg")  # letakkan gambar dalam folder yang sama
+img = Image.open("parking.jpg")  # adjust letakkan gambar dalam folder yang sama
 img = img.resize((250, 150))
 photo = ImageTk.PhotoImage(img)
 
