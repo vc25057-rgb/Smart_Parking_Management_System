@@ -7,8 +7,8 @@ import datetime
 # CONFIG LOGIN
 # =========================
 
-VALID_USERNAME = "admin8"
-VALID_PASSWORD = "1234"
+VALID_USERNAME = "1"
+VALID_PASSWORD = "1"
 
 
 # =========================
@@ -160,6 +160,18 @@ class App:
         title = tk.Label(self.root, text="SMART PARKING MANAGEMENT SYSTEM",
                          font=("Arial", 18, "bold"))
         title.pack(pady=10)
+
+        banner = Image.open("BG-Main-Page.jpg")
+        banner = banner.resize((600,300))
+
+        self.banner_photo = ImageTk.PhotoImage(banner)
+
+        banner_label = tk.Label(
+        self.root,
+        image=self.banner_photo,
+        bd=0
+        )
+        banner_label.pack(pady=5)
 
         # DASHBOARD
         self.dash = tk.Frame(self.root)
