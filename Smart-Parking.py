@@ -327,10 +327,10 @@ def login():
         root.mainloop()
     else:
         messagebox.showerror("Login", "Wrong credentials")
-        
+
 login_root = tk.Tk()
 login_root.title("SMART PARKING MANAGEMENT SYSTEM - LOGIN")
-login_root.geometry("500x500")
+login_root.geometry("1000x600") #adjust saiz login skrin
 
 # ===== LOAD IMAGE =====
 img = Image.open("parking.jpg")  # letakkan gambar dalam folder yang sama
