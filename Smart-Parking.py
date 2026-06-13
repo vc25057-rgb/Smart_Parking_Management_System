@@ -5,6 +5,9 @@ import datetime
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 import os
+import os
+import sys
+import subprocess
 
 # =========================
 # CONFIG LOGIN
@@ -369,8 +372,26 @@ class App:
 
         messagebox.showinfo(
             "Export Success",
-            f"PDF report saved successfully!\n\n{os.path.abspath(filename)}"
+            "PDF report generated successfully!"
         )
+
+        filepath = os.path.abspath(filename)
+
+        try:
+            if sys.platform.startswith("win"):
+                os.startfile(filepath)
+
+            elif sys.platform.startswith("darwin"):
+                subprocess.call(["open", filepath])
+
+            else:
+                subprocess.call(["xdg-open", filepath])
+
+        except Exception as e:
+            messagebox.showerror(
+                "Open PDF Error",
+                f"Cannot open PDF automatically.\n{e}"
+            )
 
     def view(self, level):
         win = tk.Toplevel(self.root)
