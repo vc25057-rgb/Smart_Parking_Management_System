@@ -2,6 +2,9 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 from PIL import Image, ImageTk
 import datetime
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import A4
+import os
 
 # =========================
 # CONFIG LOGIN
@@ -156,7 +159,6 @@ class App:
     # =========================
 
     def build_ui(self):
-
         title = tk.Label(self.root, text="SMART PARKING MANAGEMENT SYSTEM",
                          font=("Arial", 18, "bold"))
         title.pack(pady=10)
@@ -203,6 +205,7 @@ class App:
         tk.Button(box, text="EXIT", command=self.exit).grid(row=0, column=5)
         tk.Button(box, text="SEARCH", command=self.search).grid(row=0, column=6)
         tk.Button(box, text="RESET", command=self.reset).grid(row=0, column=7)
+        tk.Button(box, text="EXPORT PDF", command=self.export_pdf).grid(row=0, column=8)
 
         # LEVEL INFO
         self.level_frame = tk.LabelFrame(self.root, text="Level Status")
@@ -245,6 +248,7 @@ class App:
             messagebox.showinfo("Success", f"{v}\n{level}\n{slot}")
             self.update_dashboard()
             self.refresh_history()
+    
         else:
             messagebox.showerror("Full", "No slot")
 
@@ -289,9 +293,84 @@ class App:
 
         for r in self.system.history[-20:]:
             self.history_box.insert(
-                tk.END,
-                f"{r['vehicle']} | {r['level']} | {r['slot']} | IN:{r['in']} | OUT:{r['out']}\n"
-            )
+            tk.END,
+            f"{r['vehicle']} | {r['level']} | {r['slot']} | IN:{r['in']} | OUT:{r['out']}\n"
+        )
+
+# =========================
+# EXPORT PDF
+# =========================
+    def export_pdf(self):
+
+        filename = f"Parking_Report_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
+
+        pdf = canvas.Canvas(filename, pagesize=A4)
+
+        width, height = A4
+        y = height - 50
+
+        pdf.setFont("Helvetica-Bold", 16)
+        pdf.drawString(50, y, "SMART PARKING MANAGEMENT SYSTEM")
+
+        y -= 30
+
+        pdf.setFont("Helvetica", 11)
+        pdf.drawString(
+            50,
+            y,
+            f"Generated: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+        )
+
+        y -= 30
+
+        available, occupied = self.system.stats()
+        total = self.system.levels * 10
+
+        pdf.drawString(50, y, f"Total Slots : {total}")
+        y -= 20
+
+        pdf.drawString(50, y, f"Available Slots : {available}")
+        y -= 20
+
+        pdf.drawString(50, y, f"Occupied Slots : {occupied}")
+
+        y -= 40
+
+        pdf.setFont("Helvetica-Bold", 12)
+        pdf.drawString(50, y, "Parking History")
+
+        y -= 25
+
+        pdf.setFont("Helvetica", 9)
+
+        if len(self.system.history) == 0:
+            pdf.drawString(50, y, "No parking records available.")
+
+        else:
+            for record in self.system.history:
+
+                text = (
+                    f"{record['vehicle']} | "
+                    f"{record['level']} | "
+                    f"{record['slot']} | "
+                    f"IN: {record['in']} | "
+                    f"OUT: {record['out']}"
+                )
+
+                pdf.drawString(50, y, text)
+
+                y -= 18
+
+                if y < 50:
+                    pdf.showPage()
+                    pdf.setFont("Helvetica", 9)
+                    y = height - 50
+        pdf.save()
+
+        messagebox.showinfo(
+            "Export Success",
+            f"PDF report saved successfully!\n\n{os.path.abspath(filename)}"
+        )
 
     def view(self, level):
         win = tk.Toplevel(self.root)
@@ -308,68 +387,86 @@ class App:
 
             if slot.startswith("VVIP"):
                 color = "khaki"
+
             elif slot.startswith("OKU"):
                 color = "lightblue"
 
             if v:
                 color = "tomato"
 
-            tk.Label(win, text=f"{slot}\n{v or 'EMPTY'}",
-                     bg=color, width=12, height=4).grid(row=r, column=c)
+            tk.Label(
+                win,
+                text=f"{slot}\n{v or 'EMPTY'}",
+                bg=color,
+                width=12,
+                height=4
+            ).grid(row=r, column=c)
 
             c += 1
+
             if c == 5:
                 c = 0
                 r += 1
 
-
 # =========================
 # LOGIN SYSTEM
 # =========================
+
 def login():
     u = user.get()
     p = pwd.get()
 
     if u == VALID_USERNAME and p == VALID_PASSWORD:
         messagebox.showinfo("Login", "Success")
+
         login_root.destroy()
 
         root = tk.Tk()
         App(root)
         root.mainloop()
+
     else:
         messagebox.showerror("Login", "Wrong credentials")
 
+
+# =========================
+# LOGIN WINDOW
+# =========================
+
 login_root = tk.Tk()
 login_root.title("SMART PARKING MANAGEMENT SYSTEM - LOGIN")
-login_root.geometry("1000x600") #adjust saiz login skrin
+login_root.geometry("1000x600")
 
-# ===== LOAD IMAGE =====
-img = Image.open("parking.jpg")  # adjust letakkan gambar dalam folder yang sama
+# IMAGE
+img = Image.open("parking.jpg")
 img = img.resize((250, 150))
 photo = ImageTk.PhotoImage(img)
 
-# ===== PROJECT TITLE =====
+# TITLE
 tk.Label(
     login_root,
     text="SMART PARKING MANAGEMENT SYSTEM",
     font=("Arial", 14, "bold")
 ).pack(pady=10)
 
-# ===== IMAGE =====
+# IMAGE LABEL
 img_label = tk.Label(login_root, image=photo)
 img_label.image = photo
 img_label.pack(pady=10)
 
-# ===== LOGIN FORM =====
+# USERNAME
 tk.Label(login_root, text="Username").pack()
+
 user = tk.Entry(login_root)
 user.pack(pady=5)
 
+# PASSWORD
 tk.Label(login_root, text="Password").pack()
+
 pwd = tk.Entry(login_root, show="*")
 pwd.pack(pady=5)
 
+# BUTTON
 tk.Button(
     login_root,
     text="Login",
