@@ -13,8 +13,8 @@ import subprocess
 # CONFIG LOGIN
 # =========================
 
-VALID_USERNAME = "1"
-VALID_PASSWORD = "1"
+VALID_USERNAME = "admin"
+VALID_PASSWORD = "1234"
 
 
 # =========================
