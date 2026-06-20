@@ -459,7 +459,7 @@ login_root.title("SMART PARKING MANAGEMENT SYSTEM - LOGIN")
 login_root.geometry("1000x600")
 
 # IMAGE
-img = Image.open("parking.jpg")
+img = Image.open("UMPSA LOGO.jpg")
 img = img.resize((250, 150))
 photo = ImageTk.PhotoImage(img)
 
